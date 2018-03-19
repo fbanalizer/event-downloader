@@ -37,6 +37,10 @@ public class EventDownloader {
         CompletableFuture<EventDescription> description = descriptionDownloader.download(id);
         CompletableFuture.allOf(attendees, description).join();
 
+        return downloadedEventRepository.save(buildDownloadedEvent(id, attendees, description));
+    }
+
+    private DownloadedEvent buildDownloadedEvent(String id, CompletableFuture<Set<EventAttendee>> attendees, CompletableFuture<EventDescription> description) {
         try {
             return DownloadedEvent.ofDescriptionAttendeesAndFacebookId(description.get(), attendees.get(), id);
         }  catch (Exception e) {

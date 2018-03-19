@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class EventDownloader {
@@ -25,7 +26,7 @@ public class EventDownloader {
 
     public DownloadedEvent downloadEvent(String id) {
         return getEventFromLocalStorage(id)
-                .orElse(downloadFromFacebook(id));
+                .orElseGet(() -> downloadFromFacebook(id));
     }
 
     private Optional<DownloadedEvent> getEventFromLocalStorage(String id) {
@@ -43,7 +44,7 @@ public class EventDownloader {
     private DownloadedEvent buildDownloadedEvent(String id, CompletableFuture<Set<EventAttendee>> attendees, CompletableFuture<EventDescription> description) {
         try {
             return DownloadedEvent.ofDescriptionAttendeesAndFacebookId(description.get(), attendees.get(), id);
-        }  catch (Exception e) {
+        }  catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }

@@ -3,10 +3,7 @@ package com.github.fbanalizer.eventdownloader.event.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
@@ -19,9 +16,9 @@ public class DownloadedEvent {
     private String id = UUID.randomUUID().toString();
     private String facebookId;
     private LocalDate lastUpdate = LocalDate.now();
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<EventAttendee> eventAttendees;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private EventDescription eventDescription;
 
     public static DownloadedEvent ofDescriptionAttendeesAndFacebookId(EventDescription eventDescription,
